@@ -23,7 +23,7 @@ def qt_header(shader: str) -> str:
     shader = re.sub(r"^precision\s+highp\s+float;\s*", "", shader, flags=re.M)
     shader = shader.replace(
         "gl_FragCoord.xy",
-        "vec2(qt_TexCoord0.x * uResolution.x, (1.0 - qt_TexCoord0.y) * uResolution.y)",
+        "vec2(qt_TexCoord0.x * uViewportResolution.x - 0.5 * (uViewportResolution.x - uResolution.x), (1.0 - qt_TexCoord0.y) * uViewportResolution.y - 0.5 * (uViewportResolution.y - uResolution.y))",
     )
     return shader.replace(
         "out vec4 fragColor;",
@@ -39,6 +39,7 @@ def convert_strands(shader: str) -> str:
         shader = shader.replace(declaration, "", 1)
     block = """layout(std140, binding = 0) uniform buf {
   mat4 qt_Matrix; float qt_Opacity; float uTime; vec2 uResolution;
+  vec2 uViewportResolution;
   vec4 uColor0; vec4 uColor1; vec4 uColor2; vec4 uColor3;
   vec4 uColor4; vec4 uColor5; vec4 uColor6; vec4 uColor7;
   int uColorCount; int uStrandCount; float uSpeed; float uAmplitude;
@@ -71,7 +72,8 @@ def convert_glass(shader: str) -> str:
         shader = shader.replace(declaration, "", 1)
     uniforms = """layout(binding = 1) uniform sampler2D uScene;
 layout(std140, binding = 0) uniform buf {
-  mat4 qt_Matrix; float qt_Opacity; vec2 uResolution; float uRadius;
+  mat4 qt_Matrix; float qt_Opacity; vec2 uResolution; vec2 uViewportResolution;
+  float uRadius;
   float uRefraction; float uDispersion;
 };
 """

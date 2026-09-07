@@ -7,6 +7,7 @@ Item {
   property var paletteSource
   property real flow: 0
   property real elapsed: 0
+  property size contentResolution: Qt.size(width, height)
   readonly property var settings: config ? config.values : ({})
   readonly property string shaderDir: Quickshell.env("HOME") + "/.local/state/aura-voxtype-hud/generated"
   readonly property var activeColors: settings.paletteMode === "omarchy" && paletteSource
@@ -24,7 +25,8 @@ Item {
     id: strands
     anchors.fill: parent
     property real uTime: root.elapsed
-    property size uResolution: Qt.size(width, height)
+    property size uResolution: root.contentResolution
+    property size uViewportResolution: Qt.size(width, height)
     property color uColor0: root.colorAt(0)
     property color uColor1: root.colorAt(1)
     property color uColor2: root.colorAt(2)
@@ -66,7 +68,8 @@ Item {
     anchors.fill: parent
     visible: root.settings.glass === true
     property variant uScene: scene
-    property size uResolution: Qt.size(width, height)
+    property size uResolution: root.contentResolution
+    property size uViewportResolution: Qt.size(width, height)
     property real uRadius: 0.46 * (root.settings.glassSize || 1)
     property real uRefraction: root.settings.refraction === undefined ? 1 : root.settings.refraction
     property real uDispersion: root.settings.dispersion === undefined ? 1 : root.settings.dispersion

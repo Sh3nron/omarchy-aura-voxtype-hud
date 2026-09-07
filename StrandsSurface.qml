@@ -74,15 +74,17 @@ PanelWindow {
     id: viewport
     readonly property real requestedWidth: panel.config ? panel.config.values.width : 640
     readonly property real requestedHeight: panel.config ? panel.config.values.height : 480
+    readonly property real verticalOverscan: 320
+    readonly property real renderHeight: requestedHeight + verticalOverscan
     readonly property real fitScale: Math.min(1,
       Math.min((panel.width - 8) / Math.max(1, requestedWidth),
-               (panel.height - 8) / Math.max(1, requestedHeight)))
+               (panel.height - 8) / Math.max(1, renderHeight)))
     width: requestedWidth * fitScale
-    height: requestedHeight * fitScale
+    height: renderHeight * fitScale
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
-    anchors.bottomMargin: Math.min(panel.config ? panel.config.values.bottomMargin : 24,
-                                   Math.max(0, panel.height - height))
+    anchors.bottomMargin: (panel.config ? panel.config.values.bottomMargin : 24)
+      - verticalOverscan * fitScale / 2
     opacity: panel.presence
 
     StrandsEffect {
@@ -91,6 +93,8 @@ PanelWindow {
       paletteSource: panel.paletteSource
       flow: panel.flow
       elapsed: panel.elapsed
+      contentResolution: Qt.size(viewport.requestedWidth * viewport.fitScale,
+                                 viewport.requestedHeight * viewport.fitScale)
     }
   }
 }
