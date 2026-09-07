@@ -1,0 +1,8 @@
+*.bak
+*.log
+build/
+.cache/
+generated/
+upstream/
+__pycache__/
+*.pyc

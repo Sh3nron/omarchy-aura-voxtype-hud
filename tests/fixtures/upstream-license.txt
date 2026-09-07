@@ -1,0 +1,1 @@
+Synthetic test fixture. This is not React Bits source or license text.

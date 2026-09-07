@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.sh3nron.aura-voxtype-hud",
+  "name": "Aura Voxtype HUD",
+  "version": "1.0.0",
+  "author": "Yeshuah Franco",
+  "license": "MIT",
+  "description": "A voice-reactive Omarchy HUD that locally acquires and builds React Bits Strands.",
+  "kinds": ["service"],
+  "keepLoaded": true,
+  "entryPoints": {
+    "service": "Service.qml"
+  }
+}

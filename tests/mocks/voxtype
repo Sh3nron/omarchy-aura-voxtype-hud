@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ ${1:-} == --version ]]; then
+  echo "voxtype 1.0.1"
+else
+  exit 2
+fi

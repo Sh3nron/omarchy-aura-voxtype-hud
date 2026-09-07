@@ -1,0 +1,7 @@
+{
+  "name": "Strands-JS-CSS",
+  "files": [{
+    "path": "Strands.jsx",
+    "content": "const MAX_STRANDS = 12; const MAX_COLORS = 8; const FRAG = `#version 300 es\nprecision highp float;\nuniform float uTime;\nuniform vec2 uResolution;\nuniform vec3 uColors[${MAX_COLORS}];\nuniform int uColorCount;\nuniform int uStrandCount;\nuniform float uSpeed;\nuniform float uAmplitude;\nuniform float uWaviness;\nuniform float uThickness;\nuniform float uGlow;\nuniform float uTaper;\nuniform float uSpread;\nuniform float uHueShift;\nuniform float uIntensity;\nuniform float uOpacity;\nuniform float uScale;\nuniform float uSaturation;\nout vec4 fragColor;\nvec3 samplePalette(float t) { int idx = int(t); int nextIdx = idx; return mix(uColors[idx], uColors[nextIdx], 0.0); }\nvoid main() { vec2 p = gl_FragCoord.xy / uResolution; fragColor = vec4(samplePalette(p.x), 1.0); }\n`; const GLASS_FRAG = `#version 300 es\nprecision highp float;\nuniform sampler2D uScene;\nuniform vec2 uResolution;\nuniform float uRadius;\nuniform float uRefraction;\nuniform float uDispersion;\nout vec4 fragColor;\nvoid main() { vec2 p = gl_FragCoord.xy / uResolution; fragColor = texture(uScene, p); }\n`;"
+  }]
+}
