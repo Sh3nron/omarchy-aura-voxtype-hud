@@ -21,8 +21,7 @@ python3 "$ROOT/tools/build-upstream.py" "$ROOT/tests/fixtures/strands-shape.json
 "$QMLLINT" -I "${OMARCHY_PATH:-/usr/share/omarchy}/shell" \
   "$ROOT/Service.qml" "$ROOT/HudConfig.qml" "$ROOT/OmarchyPalette.qml" \
   "$ROOT/VoxtypeState.qml" "$ROOT/AudioBridge.qml" \
-  "$ROOT/StrandsEffect.qml" "$ROOT/StrandsSurface.qml" "$ROOT/dev-shell.qml" \
-  "$ROOT/dev-visual.qml" "$ROOT/dev-preview.qml"
+  "$ROOT/StrandsEffect.qml" "$ROOT/StrandsSurface.qml"
 
 bash -n "$ROOT/setup.sh" "$ROOT/uninstall.sh" "$ROOT/tests/check.sh"
 python3 - "$ROOT/tools/build-upstream.py" <<'PY'

@@ -6,7 +6,6 @@ QtObject {
   id: root
 
   readonly property string path: Quickshell.env("HOME") + "/.config/voxtype/aura-strands-hud.json"
-  property int revision: 0
   property var values: defaults()
 
   function defaults() {
@@ -95,7 +94,6 @@ QtObject {
       console.warn("aura-voxtype-hud: invalid config; using defaults:", error)
       values = defaults()
     }
-    revision++
   }
 
   property FileView file: FileView {
@@ -103,7 +101,7 @@ QtObject {
     watchChanges: true
     printErrors: false
     onLoaded: root.load(text())
-    onLoadFailed: { root.values = root.defaults(); root.revision++ }
+    onLoadFailed: root.values = root.defaults()
     onFileChanged: reload()
   }
 }

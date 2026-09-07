@@ -52,7 +52,7 @@ version="$(voxtype --version | awk '{print $NF}')"
 
 if [[ "$ROOT_DIR" != "$PLUGIN_DIR" ]]; then
   echo "Expected the marketplace checkout at: $PLUGIN_DIR" >&2
-  echo "Install it first with: omarchy plugin add <repository-url> --enable --yes" >&2
+  echo "Install it first with: omarchy plugin add <repository-url> --yes" >&2
   exit 1
 fi
 
@@ -70,6 +70,27 @@ fi
 upstream_tmp="$(mktemp "${TMPDIR:-/tmp}/aura-strands-upstream.XXXXXX")"
 license_tmp="$(mktemp "${TMPDIR:-/tmp}/aura-strands-license.XXXXXX")"
 generated_tmp="$(mktemp -d "${TMPDIR:-/tmp}/aura-strands-generated.XXXXXX")"
+backup_dir=""
+tmp_state=""
+tmp_config=""
+mutated=false
+committed=false
+hud_created=false
+cleanup() {
+  status=$?
+  if [[ $status -ne 0 && "$mutated" == true && "$committed" != true ]]; then
+    cp -a -- "$backup_dir/config.toml" "$VOXTYPE_CONFIG"
+    [[ "$hud_created" == true ]] && rm -f -- "$HUD_CONFIG"
+    systemctl --user restart voxtype.service >/dev/null 2>&1 || true
+    echo "Setup failed; restored the pre-install Voxtype configuration." >&2
+  fi
+  [[ -z "$tmp_state" ]] || rm -f -- "$tmp_state"
+  [[ -z "$tmp_config" ]] || rm -f -- "$tmp_config"
+  rm -f -- "$upstream_tmp" "$license_tmp"
+  rm -rf -- "$generated_tmp"
+}
+trap cleanup EXIT
+
 if [[ -n ${AURA_STRANDS_SOURCE_FILE:-} ]]; then
   cp -- "$AURA_STRANDS_SOURCE_FILE" "$upstream_tmp"
 else
@@ -95,21 +116,6 @@ cp -a -- "$VOXTYPE_CONFIG" "$backup_dir/config.toml"
 state_file="$STATE_DIR/install-state"
 tmp_state="$(mktemp "${TMPDIR:-/tmp}/aura-voxtype-state.XXXXXX")"
 tmp_config="$(mktemp "${TMPDIR:-/tmp}/aura-voxtype-config.XXXXXX")"
-mutated=false
-committed=false
-hud_created=false
-cleanup() {
-  status=$?
-  if [[ $status -ne 0 && "$mutated" == true && "$committed" != true ]]; then
-    cp -a -- "$backup_dir/config.toml" "$VOXTYPE_CONFIG"
-    [[ "$hud_created" == true ]] && rm -f -- "$HUD_CONFIG"
-    systemctl --user restart voxtype.service >/dev/null 2>&1 || true
-    echo "Setup failed; restored the pre-install Voxtype configuration." >&2
-  fi
-  rm -f -- "$tmp_state" "$tmp_config" "$upstream_tmp" "$license_tmp"
-  rm -rf -- "$generated_tmp"
-}
-trap cleanup EXIT
 
 python3 - "$VOXTYPE_CONFIG" "$tmp_config" "$tmp_state" <<'PY'
 from pathlib import Path
