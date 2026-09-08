@@ -12,7 +12,7 @@ Transparent, cardless, theme-aware, and rendered directly inside the existing Om
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-3daee9.svg)](LICENSE)
 [![Omarchy](https://img.shields.io/badge/Omarchy-Quattro-50fa7b.svg)](https://omarchy.org)
-[![Version](https://img.shields.io/badge/version-1.0.1-fab387.svg)]()
+[![Version](https://img.shields.io/badge/version-1.0.2-fab387.svg)]()
 
 [Features](#features) · [Install](#install) · [Voice response](#voice-response) ·
 [Configure](#configure) · [Update](#update) · [Remove](#remove) ·
