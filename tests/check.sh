@@ -24,6 +24,9 @@ python3 "$ROOT/tools/build-upstream.py" "$ROOT/tests/fixtures/strands-shape.json
   "$ROOT/StrandsEffect.qml" "$ROOT/StrandsSurface.qml"
 
 bash -n "$ROOT/setup.sh" "$ROOT/uninstall.sh" "$ROOT/tests/check.sh"
+for flag in --connect-timeout --max-time --max-filesize; do
+  grep -q -- "$flag" "$ROOT/setup.sh" || { echo "setup.sh is missing download limit: $flag" >&2; exit 1; }
+done
 python3 - "$ROOT/tools/build-upstream.py" <<'PY'
 import sys
 source = open(sys.argv[1], encoding="utf-8").read()

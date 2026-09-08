@@ -12,6 +12,8 @@ UPSTREAM_URL="https://raw.githubusercontent.com/DavidHDev/react-bits/$UPSTREAM_C
 UPSTREAM_SHA256="${AURA_STRANDS_SHA256:-118c460fe92845a331b052c81201d6ae22ee039c029841de06ebc798c953599b}"
 UPSTREAM_LICENSE_URL="https://raw.githubusercontent.com/DavidHDev/react-bits/$UPSTREAM_COMMIT/LICENSE.md"
 UPSTREAM_LICENSE_SHA256="${AURA_STRANDS_LICENSE_SHA256:-f4c33af6739191537738662d223b68d77bc226f4b57ea883e16481d8cc5c73c9}"
+UPSTREAM_MAX_BYTES=65536
+LICENSE_MAX_BYTES=8192
 QSB="${QSB:-/usr/lib/qt6/bin/qsb}"
 PALETTE="omarchy"
 ASSUME_YES=false
@@ -19,6 +21,16 @@ DRY_RUN=false
 
 usage() {
   printf '%s\n' "Usage: ./setup.sh [--yes] [--dry-run] [--palette omarchy|original]"
+}
+
+download_pinned() {
+  local url="$1" target="$2" max_bytes="$3" label="$4" size
+  curl --fail --silent --show-error --location \
+    --connect-timeout 10 --max-time 60 --max-filesize "$max_bytes" \
+    --output "$target" "$url"
+  [[ -f "$target" && -s "$target" ]] || { echo "$label download is missing or empty" >&2; exit 1; }
+  size="$(stat -c %s -- "$target")"
+  (( size <= max_bytes )) || { echo "$label download exceeded the ${max_bytes}-byte limit" >&2; exit 1; }
 }
 
 while (($#)); do
@@ -94,12 +106,12 @@ trap cleanup EXIT
 if [[ -n ${AURA_STRANDS_SOURCE_FILE:-} ]]; then
   cp -- "$AURA_STRANDS_SOURCE_FILE" "$upstream_tmp"
 else
-  curl -fsSL "$UPSTREAM_URL" -o "$upstream_tmp"
+  download_pinned "$UPSTREAM_URL" "$upstream_tmp" "$UPSTREAM_MAX_BYTES" "React Bits Strands"
 fi
 if [[ -n ${AURA_STRANDS_LICENSE_FILE:-} ]]; then
   cp -- "$AURA_STRANDS_LICENSE_FILE" "$license_tmp"
 else
-  curl -fsSL "$UPSTREAM_LICENSE_URL" -o "$license_tmp"
+  download_pinned "$UPSTREAM_LICENSE_URL" "$license_tmp" "$LICENSE_MAX_BYTES" "React Bits license"
 fi
 printf '%s  %s\n' "$UPSTREAM_SHA256" "$upstream_tmp" | sha256sum --check --status || { echo "React Bits Strands integrity check failed" >&2; exit 1; }
 printf '%s  %s\n' "$UPSTREAM_LICENSE_SHA256" "$license_tmp" | sha256sum --check --status || { echo "React Bits license integrity check failed" >&2; exit 1; }
